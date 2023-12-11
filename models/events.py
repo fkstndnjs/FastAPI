@@ -5,7 +5,7 @@ from pydantic import EmailStr
 # Definition of Event Table Model
 class Event(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)  # Primary Key Declaration\
-    creator: str
+    # creator: str
     title: str
     image: str
     description: str

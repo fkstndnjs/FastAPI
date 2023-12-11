@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>이벤트 관리</title>
+  </head>
+  <body>
+    <h1>이벤트 관리 시스템</h1>
+
+    <!-- 이벤트 생성 -->
+    <h2>새 이벤트 생성</h2>
+    <input type="number" id="createId" placeholder="이벤트 번호" />
+    <input type="text" id="createTitle" placeholder="이벤트 제목" />
+    <input type="text" id="createImage" placeholder="이미지 URL" />
+    <input type="text" id="createDescription" placeholder="설명" />
+    <input type="text" id="createLocation" placeholder="위치" />
+    <input type="text" id="createTags" placeholder="태그 (쉼표로 구분)" />
+    <button id="createButton">이벤트 생성</button>
+
+    <!-- 이벤트 조회 -->
+    <h2>모든 이벤트 조회</h2>
+    <button id="retrieveAllButton">이벤트 조회</button>
+    <ul id="eventList"></ul>
+
+    <!-- 이벤트 수정 -->
+    <h2>이벤트 수정</h2>
+    <input type="number" id="editEventId" placeholder="이벤트 ID" />
+    <input type="text" id="editTitle" placeholder="새 이벤트 제목" />
+    <input type="text" id="editImage" placeholder="새 이미지 URL" />
+    <input type="text" id="editDescription" placeholder="새 설명" />
+    <input type="text" id="editLocation" placeholder="새 위치" />
+    <input type="text" id="editTags" placeholder="새 태그 (쉼표로 구분)" />
+    <button id="updateButton">이벤트 수정</button>
+
+    <!-- 이벤트 삭제 -->
+    <h2>이벤트 삭제</h2>
+    <input type="number" id="deleteEventId" placeholder="이벤트 ID" />
+    <button id="deleteButton">이벤트 삭제</button>
+
+    <script>
+      // 이벤트 생성
+      document
+        .getElementById("createButton")
+        .addEventListener("click", function () {
+          const id = document.getElementById("createId").value;
+          const title = document.getElementById("createTitle").value;
+          const image = document.getElementById("createImage").value;
+          const description =
+            document.getElementById("createDescription").value;
+          const location = document.getElementById("createLocation").value;
+          const tags = document.getElementById("createTags").value.split(",");
+
+          fetch("http://localhost:8000/event/new", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id,
+              title,
+              image,
+              description,
+              location,
+              tags,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data));
+        });
+
+      // 모든 이벤트 조회
+      document
+        .getElementById("retrieveAllButton")
+        .addEventListener("click", function () {
+          fetch("http://localhost:8000/event/")
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              const eventList = document.getElementById("eventList");
+              eventList.innerHTML = "";
+              data.forEach((event) => {
+                console.log(event);
+                const li = document.createElement("li");
+                li.textContent = `ID: ${event.id}, 이름: ${event.title}`;
+                eventList.appendChild(li);
+              });
+            });
+        });
+
+      // 이벤트 수정
+      document
+        .getElementById("updateButton")
+        .addEventListener("click", function () {
+          const id = document.getElementById("editEventId").value;
+          const title = document.getElementById("editTitle").value;
+          const image = document.getElementById("editImage").value;
+          const description = document.getElementById("editDescription").value;
+          const location = document.getElementById("editLocation").value;
+          const tags = document.getElementById("editTags").value.split(",");
+
+          fetch(`http://localhost:8000/event/edit/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title, image, description, location, tags }),
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data));
+        });
+
+      // 이벤트 삭제
+      document
+        .getElementById("deleteButton")
+        .addEventListener("click", function () {
+          const id = document.getElementById("deleteEventId").value;
+          fetch(`http://localhost:8000/event/delete/${id}`, {
+            method: "DELETE",
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data));
+        });
+    </script>
+  </body>
+</html>
