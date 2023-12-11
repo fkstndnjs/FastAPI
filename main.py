@@ -3,11 +3,13 @@ from fastapi.responses import RedirectResponse
 
 from database.connection import conn
 from routes.events import event_router
+from routes.users import user_router
 import uvicorn
 
 app = FastAPI()
 
 app.include_router(event_router, prefix="/event")  # Service Path: "/event/*"
+app.include_router(user_router, prefix="/user")  # Service Path: "/event/*"
 
 @app.on_event("startup")  # Creates DB Connection and Tables on Startup
 def on_startup():
